@@ -53,7 +53,6 @@ class ViewController(tk.Frame):
         self._switch_view(self._stock_list_view)
         self._update_button_style(self._stock_list_button)
 
-
     def _on_button_click(self, view, button):
         self._switch_view(view)
         self._update_button_style(button)

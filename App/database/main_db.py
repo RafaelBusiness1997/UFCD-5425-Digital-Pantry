@@ -1,4 +1,5 @@
 import sqlite3
+from database.item_list_db import ItemListDB
 
 
 class MainDB:
@@ -49,7 +50,7 @@ class MainDB:
             raise
 
         finally:
-            self.close()
+            ItemListDB(self._connection, self._cursor)
 
     def close(self):
         try:
