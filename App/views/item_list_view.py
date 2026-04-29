@@ -2,16 +2,15 @@ import tkinter as _tk
 from tkinter import messagebox
 from dialogs.item_dialog import ItemDialog
 from database.item_list_db import ItemListDB
-from database.main_db import MainDB
 
 
 class ItemListView(_tk.Frame):
+    """View for displaying and managing the list of items."""
     def __init__(self, parent):
         super().__init__(parent)
 
         # Setup database
-        self._db = MainDB()
-        self._item_list_db = ItemListDB(self._db._connection, self._db._cursor)
+        self._item_list_db = ItemListDB()
 
         # Track selected item
         self._selected_item_id = None
@@ -183,7 +182,7 @@ class ItemListView(_tk.Frame):
             empty_label.pack(pady=20)
 
     def _create_item_button(self, item_name, item_id):
-        """Create a button for an item with gray border."""
+        """Create a button for an item."""
         item_button = _tk.Button(
             self._scrollable_frame,
             text=item_name,

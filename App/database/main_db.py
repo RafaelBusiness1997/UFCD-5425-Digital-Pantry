@@ -5,8 +5,9 @@ from database.item_list_db import ItemListDB
 class MainDB:
     def __init__(self):
         try:
-            self._connection = self._connect()
-            self._cursor = self._connection.cursor()
+            self._connection = None
+            self._cursor = None
+            self._connect()
 
             # Items table
             self._cursor.execute("""
@@ -50,23 +51,24 @@ class MainDB:
             raise
 
         finally:
-            ItemListDB(self._connection, self._cursor)
+            self._close()
 
-    def close(self):
+    def _close(self):
         try:
             if self._connection:
                 self._connection.close()
                 self._connection = None
+                self._cursor = None
 
         except sqlite3.Error as e:
             print(f"Error closing connection: {e}")
 
     def _connect(self, db_path: str = "pantry.db"):
         try:
-            connection = sqlite3.connect(db_path)
-            connection.row_factory = sqlite3.Row
-            return connection
+            self._connection = sqlite3.connect(db_path)
+            self._connection.row_factory = sqlite3.Row
 
+            self._cursor = self._connection.cursor()
         except sqlite3.Error as e:
             print(f"Connection error: {e}")
             raise
