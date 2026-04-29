@@ -176,6 +176,7 @@ class ItemListView(_tk.Frame):
             self._edit_item_button.pack_forget()
             self._delete_item_button.pack_forget()
             self._refresh_items()
+            self._stock_list_view.refresh_items()
         except Exception as e:
             messagebox.showerror("Error", f"Failed to update item: {str(e)}")
 
