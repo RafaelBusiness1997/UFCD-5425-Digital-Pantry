@@ -142,7 +142,6 @@ class ItemListView(_tk.Frame):
                 has_price=item_data['has_price'],
                 price=item_data['price']
             )
-            messagebox.showinfo("Success", f"Item '{item_data['name']}' added successfully!")
             self._refresh_items()
         except Exception as e:
             messagebox.showerror("Error", f"Failed to add item: {str(e)}")
@@ -160,7 +159,6 @@ class ItemListView(_tk.Frame):
                 has_price=item_data['has_price'],
                 price=item_data['price']
             )
-            messagebox.showinfo("Success", f"Item '{item_data['name']}' updated successfully!")
             self._selected_item_id = None
             self._selected_item_button = None
             self._edit_item_button.pack_forget()
@@ -204,7 +202,6 @@ class ItemListView(_tk.Frame):
             self._selected_item_button = None
             self._edit_item_button.pack_forget()
             self._delete_item_button.pack_forget()
-            messagebox.showinfo("Success", "Item deleted successfully!")
             self._refresh_items()
         except Exception as e:
             messagebox.showerror("Error", f"Failed to delete item: {str(e)}")

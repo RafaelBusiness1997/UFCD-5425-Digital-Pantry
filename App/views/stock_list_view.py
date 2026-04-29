@@ -95,7 +95,6 @@ class StockListView(_tk.Frame):
                 item_id=item_data['item_id'],
                 quantity=item_data['quantity']
             )
-            messagebox.showinfo("Success", "Item added to stock list successfully!")
             self._refresh_items()
         except Exception as e:
             messagebox.showerror("Error", f"Failed to add item: {str(e)}")
@@ -133,7 +132,6 @@ class StockListView(_tk.Frame):
             self._selected_stock_id = None
             self._selected_item_button = None
             self._delete_item_button.pack_forget()
-            messagebox.showinfo("Success", "Item deleted from stock list successfully!")
             self._refresh_items()
         except Exception as e:
             messagebox.showerror("Error", f"Failed to delete item: {str(e)}")
