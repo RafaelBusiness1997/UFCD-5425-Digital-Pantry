@@ -4,35 +4,35 @@ from tkinter import messagebox
 
 class ItemDialog(tk.Toplevel):
     """Dialog for adding or editing an item."""
-    
+
     def __init__(self, parent, on_save_callback=None, mode="add", initial_data=None):
         super().__init__(parent)
-        
+
         self._mode = mode
         self._initial_data = initial_data or {}
-        
+
         # Set title based on mode
         if mode == "edit":
             self.title("Edit Item")
         else:
             self.title("Add Item")
-        
+
         self.geometry("500x650")
         self.configure(bg="white")
-        
+
         self._on_save_callback = on_save_callback
         self._result = None
-        
+
         self.transient(parent)
         self.grab_set()
-        
+
         self.update_idletasks()
         x = parent.winfo_rootx() + (parent.winfo_width() // 2) - (500 // 2)
         y = parent.winfo_rooty() + (parent.winfo_height() // 2) - (650 // 2)
         self.geometry(f"500x650+{x}+{y}")
-        
+
         self._create_form()
-    
+
     def _create_form(self):
         main_frame = tk.Frame(self, bg="white")
         main_frame.pack(fill="both", expand=True, padx=20, pady=20)
@@ -93,7 +93,7 @@ class ItemDialog(tk.Toplevel):
         # Price Frame
         self._price_frame = tk.Frame(main_frame, bg="white")
         self._price_frame.pack(anchor="w", pady=(0, 20), fill="x")
-        
+
         tk.Label(self._price_frame, text="Price:", font=("Arial", 9), bg="white").pack(anchor="w", pady=(0, 3))
         price_input = tk.Frame(self._price_frame, bg="white")
         price_input.pack(anchor="w", fill="x")
@@ -110,7 +110,7 @@ class ItemDialog(tk.Toplevel):
         save_text = "Update" if self._mode == "edit" else "Save"
         tk.Button(self._button_frame, text=save_text, command=self._on_save, bg="#96862A", fg="white", width=15, font=("Arial", 10)).pack(side="left", padx=(0, 10))
         tk.Button(self._button_frame, text="Cancel", command=self._on_cancel, bg="#cccccc", fg="black", width=15, font=("Arial", 10)).pack(side="left")
-        
+
         # Initialize price/threshold frame visibility
         if not self._has_thresholds_var.get():
             self._thresholds_frame.pack_forget()
@@ -142,6 +142,11 @@ class ItemDialog(tk.Toplevel):
             running_out_threshold = int(self._running_out_threshold_spinbox.get()) if has_thresholds else 3
             low_threshold = int(self._low_threshold_spinbox.get()) if has_thresholds else 1
 
+            if has_thresholds:
+                if not (low_threshold < running_out_threshold < stocked_threshold):
+                    messagebox.showerror("Validation Error", "Thresholds must be in order: Low < Running Out < Stocked!")
+                    return
+
             has_price = self._has_price_var.get()
             price = 0.0
             if has_price:
@@ -160,7 +165,7 @@ class ItemDialog(tk.Toplevel):
                 'has_price': has_price,
                 'price': price
             }
-            
+
             # Include item ID if editing
             if self._mode == "edit":
                 self._result['id'] = self._initial_data.get('id')
