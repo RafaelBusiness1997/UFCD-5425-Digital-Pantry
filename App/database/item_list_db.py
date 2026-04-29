@@ -52,6 +52,19 @@ class ItemListDB:
         finally:
             self._close()
 
+    def delete_item(self, item_id):
+        """Delete an item from the database."""
+        self._connect()
+        try:
+            self._cursor.execute("DELETE FROM item_list WHERE id = ?", (item_id,))
+            self._connection.commit()
+        except sqlite3.Error as e:
+            print(f"Error deleting item: {e}")
+            self._connection.rollback()
+            raise
+        finally:
+            self._close()
+
     def _close(self):
         try:
             if self._connection:

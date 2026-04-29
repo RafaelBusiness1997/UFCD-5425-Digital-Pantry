@@ -1,6 +1,7 @@
 import tkinter as _tk
 from tkinter import messagebox
 from dialogs.item_dialog import ItemDialog
+from dialogs.confirmation_dialog import ConfirmationDialog
 from database.item_list_db import ItemListDB
 
 
@@ -39,6 +40,18 @@ class ItemListView(_tk.Frame):
             bg="#4CAF50",
             fg="white",
             command=self._on_edit_item_click,
+            font=("Arial", 10),
+            padx=10,
+            pady=5
+        )
+
+        # Delete Item button (hidden by default)
+        self._delete_item_button = _tk.Button(
+            self._button_frame,
+            text="Delete Item",
+            bg="#d9534f",
+            fg="white",
+            command=self._on_delete_item_click,
             font=("Arial", 10),
             padx=10,
             pady=5
@@ -151,9 +164,50 @@ class ItemListView(_tk.Frame):
             self._selected_item_id = None
             self._selected_item_button = None
             self._edit_item_button.pack_forget()
+            self._delete_item_button.pack_forget()
             self._refresh_items()
         except Exception as e:
             messagebox.showerror("Error", f"Failed to update item: {str(e)}")
+
+    def _on_delete_item_click(self):
+        """Open the delete confirmation dialog."""
+        if self._selected_item_id is None:
+            return
+
+        # Get the selected item data
+        items = self._item_list_db.get_all_items()
+        selected_item = None
+        for item in items:
+            if item[0] == self._selected_item_id:
+                selected_item = item
+                break
+
+        if selected_item is None:
+            messagebox.showerror("Error", "Could not find selected item!")
+            return
+
+        item_name = selected_item[1]
+        message = f"Are you sure you want to delete '{item_name}'?"
+        ConfirmationDialog(
+            self,
+            title="Delete Item",
+            message=message,
+            on_confirm_callback=self._on_delete_item_confirm
+        )
+
+    def _on_delete_item_confirm(self):
+        """Handle confirmed deletion of the item."""
+        try:
+            self._item_list_db.delete_item(self._selected_item_id)
+            item_id = self._selected_item_id
+            self._selected_item_id = None
+            self._selected_item_button = None
+            self._edit_item_button.pack_forget()
+            self._delete_item_button.pack_forget()
+            messagebox.showinfo("Success", "Item deleted successfully!")
+            self._refresh_items()
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to delete item: {str(e)}")
 
     def _refresh_items(self):
         """Load all items from database and display them."""
@@ -208,8 +262,9 @@ class ItemListView(_tk.Frame):
         self._selected_item_button = item_button
         item_button.config(relief="solid", borderwidth=3, bg="#f0f0f0")
 
-        # Show edit button
+        # Show edit and delete buttons
         self._edit_item_button.pack(side="left", padx=(0, 10))
+        self._delete_item_button.pack(side="left", padx=(0, 10))
 
     def get_scrollable_frame(self):
         """Get the scrollable frame for adding items."""
