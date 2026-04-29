@@ -70,7 +70,7 @@ class StockListDB:
                     i.name,
                     s.quantity,
                     i.has_thresholds,
-                    i.stocked_treshold,
+                    i.stocked_threshold,
                     i.running_out_threshold,
                     i.low_threshold
                 FROM stock_list s
@@ -96,7 +96,7 @@ class StockListDB:
                     i.name,
                     s.quantity,
                     i.has_thresholds,
-                    i.stocked_treshold,
+                    i.stocked_threshold,
                     i.running_out_threshold,
                     i.low_threshold
                 FROM stock_list s

@@ -225,18 +225,13 @@ class StockListView(_tk.Frame):
             empty_label.pack(pady=20)
 
     def _get_sort_priority(self, has_thresholds, quantity, stocked_threshold, running_out_threshold, low_threshold):
-        """
-        Get sort priority for an item.
-        Lower priority value = shown first.
-        """
         if not has_thresholds:
-            return (3, 0)  # No thresholds - shown last
-        elif quantity < low_threshold:
-            return (0, -quantity)  # Low - shown first, sorted by quantity (lowest first)
-        elif quantity < running_out_threshold:
-            return (1, -quantity)  # Running out - shown second, sorted by quantity (lowest first)
-        else:
-            return (2, -quantity)  # Stocked - shown third, sorted by quantity (lowest first)
+            return (3, 0)
+        if quantity < running_out_threshold:
+            return (0, -quantity)  # Low
+        if quantity < stocked_threshold:
+            return (1, -quantity)  # Running out
+        return (2, -quantity)  # Stocked
 
     def _get_border_color(self, has_thresholds, quantity, stocked_threshold, running_out_threshold, low_threshold):
         """Determine border color based on thresholds and quantity."""

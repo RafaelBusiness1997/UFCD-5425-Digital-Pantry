@@ -15,7 +15,7 @@ class MainDB:
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     name VARCHAR(255) NOT NULL UNIQUE,
                     has_thresholds BOOLEAN NOT NULL DEFAULT 1,
-                    stocked_treshold INTEGER DEFAULT 6,
+                    stocked_threshold INTEGER DEFAULT 6,
                     running_out_threshold INTEGER DEFAULT 3,
                     low_threshold INTEGER DEFAULT 1,
                     has_price BOOLEAN NOT NULL DEFAULT 0,

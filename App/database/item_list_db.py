@@ -11,7 +11,7 @@ class ItemListDB:
         self._connect()
         try:
             self._cursor.execute("""
-                INSERT INTO item_list (name, has_thresholds, stocked_treshold, running_out_threshold, low_threshold, has_price, price)
+                INSERT INTO item_list (name, has_thresholds, stocked_threshold, running_out_threshold, low_threshold, has_price, price)
                 VALUES (?, ?, ?, ?, ?, ?, ?)
             """, (name, has_thresholds, stocked_threshold, running_out_threshold, low_threshold, has_price, price))
             self._connection.commit()
@@ -28,7 +28,7 @@ class ItemListDB:
         try:
             self._cursor.execute("""
                 UPDATE item_list
-                SET name = ?, has_thresholds = ?, stocked_treshold = ?, running_out_threshold = ?, low_threshold = ?, has_price = ?, price = ?
+                SET name = ?, has_thresholds = ?, stocked_threshold = ?, running_out_threshold = ?, low_threshold = ?, has_price = ?, price = ?
                 WHERE id = ?
             """, (name, has_thresholds, stocked_threshold, running_out_threshold, low_threshold, has_price, price, item_id))
             self._connection.commit()
@@ -43,7 +43,7 @@ class ItemListDB:
         """Get all items from the database."""
         self._connect()
         try:
-            self._cursor.execute("SELECT id, name, has_thresholds, stocked_treshold, running_out_threshold, low_threshold, has_price, price FROM item_list ORDER BY name")
+            self._cursor.execute("SELECT id, name, has_thresholds, stocked_threshold, running_out_threshold, low_threshold, has_price, price FROM item_list ORDER BY name")
             items = self._cursor.fetchall()
             return items
         except sqlite3.Error as e:
