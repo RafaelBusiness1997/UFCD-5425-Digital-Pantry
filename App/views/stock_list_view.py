@@ -1,6 +1,7 @@
 import tkinter as _tk
 from tkinter import messagebox
 from dialogs.item_select_dialog import ItemSelectDialog
+from dialogs.quantity_dialog import QuantityDialog
 from dialogs.confirmation_dialog import ConfirmationDialog
 from database.stock_list_db import StockListDB
 
@@ -32,6 +33,18 @@ class StockListView(_tk.Frame):
             pady=5
         )
         self._add_item_button.pack(side="left", padx=10)
+
+        # Edit Quantity button (hidden by default)
+        self._edit_quantity_button = _tk.Button(
+            self._button_frame,
+            text="Edit Quantity",
+            bg="#2196F3",
+            fg="white",
+            command=self._on_edit_quantity_click,
+            font=("Arial", 10),
+            padx=10,
+            pady=5
+        )
 
         # Delete Item button (hidden by default)
         self._delete_item_button = _tk.Button(
@@ -132,15 +145,50 @@ class StockListView(_tk.Frame):
             self._selected_stock_id = None
             self._selected_item_button = None
             self._delete_item_button.pack_forget()
+            self._edit_quantity_button.pack_forget()
             self._refresh_items()
         except Exception as e:
             messagebox.showerror("Error", f"Failed to delete item: {str(e)}")
+
+    def _on_edit_quantity_click(self):
+        """Open the edit quantity dialog."""
+        if self._selected_stock_id is None:
+            return
+
+        # Get the selected item data
+        items = self._stock_list_db.get_all_items()
+        selected_item = None
+        for item in items:
+            if item[0] == self._selected_stock_id:
+                selected_item = item
+                break
+
+        if selected_item is None:
+            messagebox.showerror("Error", "Could not find selected item!")
+            return
+
+        current_quantity = selected_item[3]
+        QuantityDialog(self, current_quantity, on_save_callback=self._on_quantity_save)
+
+    def _on_quantity_save(self, new_quantity):
+        """Handle the new quantity from the dialog and update database."""
+        try:
+            self._stock_list_db.update_item(self._selected_stock_id, new_quantity)
+            self._refresh_items()
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to update quantity: {str(e)}")
 
     def _refresh_items(self):
         """Load all items from database and display them."""
         # Clear existing items
         for widget in self._scrollable_frame.winfo_children():
             widget.destroy()
+
+        # Reset selection state
+        self._selected_stock_id = None
+        self._selected_item_button = None
+        self._edit_quantity_button.pack_forget()
+        self._delete_item_button.pack_forget()
 
         # Get all items from database
         items = self._stock_list_db.get_all_items()
@@ -240,5 +288,8 @@ class StockListView(_tk.Frame):
         self._selected_item_button = item_button
         item_button.config(bg="#f0f0f0")
 
-        # Show delete button
+        # Show edit quantity and delete buttons (forget first to ensure proper ordering)
+        self._edit_quantity_button.pack_forget()
+        self._delete_item_button.pack_forget()
+        self._edit_quantity_button.pack(side="left", padx=(0, 10))
         self._delete_item_button.pack(side="left", padx=(0, 10))
