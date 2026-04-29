@@ -57,7 +57,7 @@ class QuantityDialog(_tk.Toplevel):
         confirm_button = _tk.Button(
             button_frame,
             text="Confirm",
-            bg="#4CAF50",
+            bg="#40c440",
             fg="white",
             font=("Arial", 10),
             width=10,
@@ -69,7 +69,7 @@ class QuantityDialog(_tk.Toplevel):
         cancel_button = _tk.Button(
             button_frame,
             text="Cancel",
-            bg="#5a5a5a",
+            bg="#d9534f",
             fg="white",
             font=("Arial", 10),
             width=10,

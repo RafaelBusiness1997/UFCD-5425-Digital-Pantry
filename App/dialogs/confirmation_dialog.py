@@ -34,7 +34,7 @@ class ConfirmationDialog(_tk.Toplevel):
         confirm_button = _tk.Button(
             button_frame,
             text="Confirm",
-            bg="#d9534f",
+            bg="#40c440",
             fg="white",
             font=("Arial", 10),
             width=10,
@@ -46,7 +46,7 @@ class ConfirmationDialog(_tk.Toplevel):
         cancel_button = _tk.Button(
             button_frame,
             text="Cancel",
-            bg="#5a5a5a",
+            bg="#d9534f",
             fg="white",
             font=("Arial", 10),
             width=10,

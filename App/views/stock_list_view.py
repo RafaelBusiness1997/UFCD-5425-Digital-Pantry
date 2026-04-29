@@ -38,7 +38,7 @@ class StockListView(_tk.Frame):
         self._edit_quantity_button = _tk.Button(
             self._button_frame,
             text="Edit Quantity",
-            bg="#2196F3",
+            bg="#4CAF50",
             fg="white",
             command=self._on_edit_quantity_click,
             font=("Arial", 10),
