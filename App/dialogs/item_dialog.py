@@ -72,12 +72,6 @@ class ItemDialog(tk.Toplevel):
         self._running_out_threshold_spinbox.insert(0, str(self._initial_data.get('running_out_threshold', 3)))
         self._running_out_threshold_spinbox.pack(anchor="w", pady=(0, 10), fill="x")
 
-        tk.Label(self._thresholds_frame, text="Low:", font=("Arial", 9), bg="white").pack(anchor="w", pady=(0, 3))
-        self._low_threshold_spinbox = tk.Spinbox(self._thresholds_frame, from_=0, to=1000, width=20, font=("Arial", 10))
-        self._low_threshold_spinbox.delete(0, "end")
-        self._low_threshold_spinbox.insert(0, str(self._initial_data.get('low_threshold', 1)))
-        self._low_threshold_spinbox.pack(anchor="w", fill="x")
-
         # Has Price
         self._has_price_var = tk.BooleanVar(value=self._initial_data.get('has_price', False))
         self._has_price_checkbox = tk.Checkbutton(
@@ -140,7 +134,7 @@ class ItemDialog(tk.Toplevel):
             has_thresholds = self._has_thresholds_var.get()
             stocked_threshold = int(self._stocked_threshold_spinbox.get()) if has_thresholds else 6
             running_out_threshold = int(self._running_out_threshold_spinbox.get()) if has_thresholds else 3
-            low_threshold = int(self._low_threshold_spinbox.get()) if has_thresholds else 1
+            low_threshold = 1
 
             if has_thresholds:
                 if not (low_threshold < running_out_threshold < stocked_threshold):
