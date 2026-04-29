@@ -234,17 +234,13 @@ class StockListView(_tk.Frame):
         return (2, -quantity)  # Stocked
 
     def _get_border_color(self, has_thresholds, quantity, stocked_threshold, running_out_threshold, low_threshold):
-        """Determine border color based on thresholds and quantity."""
         if not has_thresholds:
-            return "#cccccc"  # Gray if no thresholds
+            return "#cccccc"  # Gray
         if quantity >= stocked_threshold:
             return "#00aa00"  # Green
-        elif quantity >= running_out_threshold:
+        if quantity >= running_out_threshold:
             return "#ffaa00"  # Yellow
-        elif quantity >= low_threshold:
-            return "#ff0000"  # Red
-        else:
-            return "#ff0000"  # Red (below low threshold)
+        return "#ff0000"  # Red
 
     def _create_item_button(self, item_name, quantity, stock_id, has_thresholds, stocked_threshold, running_out_threshold, low_threshold):
         """Create a button for a stock item."""
