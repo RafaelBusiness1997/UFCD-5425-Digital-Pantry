@@ -13,9 +13,9 @@ class ViewController(tk.Frame):
         self.propagate(False)
         self.pack(fill="both", expand=True)
 
-        self._item_list_view = ItemListView(self)
         self._stock_list_view = StockListView(self)
         self._shopping_list_view = ShoppingListView(self)
+        self._item_list_view = ItemListView(self, self._stock_list_view)
 
         # Setup buttons.
         self._button_frame = tk.Frame(self)
