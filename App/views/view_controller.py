@@ -56,6 +56,8 @@ class ViewController(tk.Frame):
     def _on_button_click(self, view, button):
         self._switch_view(view)
         self._update_button_style(button)
+        self._stock_list_view.deselect_item()
+        self._item_list_view.deselect_item()
 
     def _switch_view(self, view):
         if self._active_view:

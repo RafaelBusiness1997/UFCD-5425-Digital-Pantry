@@ -83,6 +83,15 @@ class StockListView(_tk.Frame):
 
         # Load items on startup
         self._refresh_items()
+        
+    def deselect_item(self):
+        """Deselect the currently selected item."""
+        if self._selected_item_button is not None:
+            self._selected_item_button.config(bg="#ffffff")
+        self._selected_stock_id = None
+        self._selected_item_button = None
+        self._edit_quantity_button.pack_forget()
+        self._delete_item_button.pack_forget()
 
     def _on_frame_configure(self, event=None):
         self._canvas.itemconfig("expand", width=self._canvas.winfo_width())
