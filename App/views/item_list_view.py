@@ -266,19 +266,27 @@ class ItemListView(_tk.Frame):
         item_button.pack(fill="x", padx=10, pady=5)
 
     def _on_item_click(self, item_id, item_button):
-        """Handle item button click - set as selected."""
-        # Deselect previous button
-        if self._selected_item_button is not None:
-            self._selected_item_button.config(relief="solid", borderwidth=2, bg="#ffffff")
+        """Handle item button click - toggle selection."""
+        if self._selected_item_id == item_id:
+            # Unselect
+            item_button.config(relief="solid", borderwidth=2, bg="#ffffff")
+            self._selected_item_id = None
+            self._selected_item_button = None
+            self._edit_item_button.pack_forget()
+            self._delete_item_button.pack_forget()
+        else:
+            # Deselect previous button
+            if self._selected_item_button is not None:
+                self._selected_item_button.config(relief="solid", borderwidth=2, bg="#ffffff")
 
-        # Select new button
-        self._selected_item_id = item_id
-        self._selected_item_button = item_button
-        item_button.config(relief="solid", borderwidth=3, bg="#cccccc")
+            # Select new button
+            self._selected_item_id = item_id
+            self._selected_item_button = item_button
+            item_button.config(relief="solid", borderwidth=3, bg="#cccccc")
 
-        # Show edit and delete buttons
-        self._edit_item_button.pack(side="left", padx=(0, 10))
-        self._delete_item_button.pack(side="left", padx=(0, 10))
+            # Show edit and delete buttons
+            self._edit_item_button.pack(side="left", padx=(0, 10))
+            self._delete_item_button.pack(side="left", padx=(0, 10))
 
     def get_scrollable_frame(self):
         """Get the scrollable frame for adding items."""

@@ -278,18 +278,32 @@ class StockListView(_tk.Frame):
         item_button._border_frame = border_frame
 
     def _on_item_click(self, stock_id, item_button, border_frame):
-        """Handle item button click - set as selected."""
-        # Deselect previous button
-        if self._selected_item_button is not None:
-            self._selected_item_button.config(bg="#ffffff")
+        """Handle item button click - toggle selection."""
+        if self._selected_stock_id == stock_id:
+            # Unselect
+            item_button.config(bg="#ffffff")
+            self._selected_stock_id = None
+            self._selected_item_button = None
+            self._edit_quantity_button.pack_forget()
+            self._delete_item_button.pack_forget()
+        else:
+            # Deselect previous button
+            if self._selected_item_button is not None:
+                self._selected_item_button.config(bg="#ffffff")
 
-        # Select new button
-        self._selected_stock_id = stock_id
-        self._selected_item_button = item_button
-        item_button.config(bg="#cccccc")
+            # Select new button
+            self._selected_stock_id = stock_id
+            self._selected_item_button = item_button
+            item_button.config(bg="#cccccc")
 
-        # Show edit quantity and delete buttons (forget first to ensure proper ordering)
-        self._edit_quantity_button.pack_forget()
-        self._delete_item_button.pack_forget()
-        self._edit_quantity_button.pack(side="left", padx=(0, 10))
-        self._delete_item_button.pack(side="left", padx=(0, 10))
+            # Show edit quantity and delete buttons (forget first to ensure proper ordering)
+            self._edit_quantity_button.pack_forget()
+            self._delete_item_button.pack_forget()
+            self._edit_quantity_button.pack(side="left", padx=(0, 10))
+            self._delete_item_button.pack(side="left", padx=(0, 10))
+
+            # Show edit quantity and delete buttons (forget first to ensure proper ordering)
+            self._edit_quantity_button.pack_forget()
+            self._delete_item_button.pack_forget()
+            self._edit_quantity_button.pack(side="left", padx=(0, 10))
+            self._delete_item_button.pack(side="left", padx=(0, 10))
