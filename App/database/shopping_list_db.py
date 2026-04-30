@@ -179,3 +179,16 @@ class ShoppingListDB:
         except sqlite3.Error as e:
             print(f"Connection error: {e}")
             raise
+        
+    def get_item_ids(self):
+        """Get the set of item_ids currently in the shopping list."""
+        self._connect()
+        try:
+            self._cursor.execute("SELECT item_id FROM shopping_list")
+            rows = self._cursor.fetchall()
+            return {row[0] for row in rows}
+        except sqlite3.Error as e:
+            print(f"Error retrieving shopping list item ids: {e}")
+            return set()
+        finally:
+            self._close()

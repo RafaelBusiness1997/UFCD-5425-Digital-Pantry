@@ -177,6 +177,7 @@ class ShoppingListView(_tk.Frame):
                 quantity=item_data['quantity']
             )
             self.refresh_items()
+            self._stock_list_view.refresh_items()
         except Exception as e:
             messagebox.showerror("Error", f"Failed to add item: {str(e)}")
 
@@ -202,6 +203,7 @@ class ShoppingListView(_tk.Frame):
             self._selected_shopping_ids.clear()
             self._selected_item_buttons.clear()
             self.refresh_items()
+            self._stock_list_view.refresh_items()
         except Exception as e:
             messagebox.showerror("Error", f"Failed to delete items: {str(e)}")
 

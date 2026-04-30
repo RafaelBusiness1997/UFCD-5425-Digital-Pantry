@@ -4,6 +4,7 @@ from dialogs.item_select_dialog import ItemSelectDialog
 from dialogs.quantity_dialog import QuantityDialog
 from dialogs.confirmation_dialog import ConfirmationDialog
 from database.stock_list_db import StockListDB
+from database.shopping_list_db import ShoppingListDB
 
 
 class StockListView(_tk.Frame):
@@ -13,6 +14,8 @@ class StockListView(_tk.Frame):
 
         # Setup database
         self._stock_list_db = StockListDB()
+        self._shopping_list_db = ShoppingListDB()
+        self._shopping_list_view = None
 
         # Track selected item
         self._selected_stock_id = None
@@ -41,6 +44,18 @@ class StockListView(_tk.Frame):
             bg="#4CAF50",
             fg="white",
             command=self._on_edit_quantity_click,
+            font=("Arial", 10),
+            padx=10,
+            pady=5
+        )
+
+        # Add to Cart button (hidden by default)
+        self._add_to_cart_button = _tk.Button(
+            self._button_frame,
+            text="Add to Cart",
+            bg="#2196F3",
+            fg="white",
+            command=self._on_add_to_cart_click,
             font=("Arial", 10),
             padx=10,
             pady=5
@@ -94,10 +109,14 @@ class StockListView(_tk.Frame):
         self._selected_stock_id = None
         self._selected_item_button = None
         self._edit_quantity_button.pack_forget()
+        self._add_to_cart_button.pack_forget()
         self._delete_item_button.pack_forget()
 
         # Get all items from database
         items = self._stock_list_db.get_all_items()
+
+        # Get item_ids currently in the shopping list
+        cart_item_ids = self._shopping_list_db.get_item_ids()
 
         # Sort items by threshold status
         sorted_items = sorted(items, key=lambda item: self._get_sort_priority(
@@ -112,13 +131,15 @@ class StockListView(_tk.Frame):
         if sorted_items:
             for item in sorted_items:
                 stock_id = item[0]
+                item_id = item[1]
                 item_name = item[2]
                 quantity = item[3]
                 has_thresholds = item[4]
                 stocked_threshold = item[5]
                 running_out_threshold = item[6]
                 low_threshold = item[7]
-                self._create_item_button(item_name, quantity, stock_id, has_thresholds, stocked_threshold, running_out_threshold, low_threshold)
+                in_cart = item_id in cart_item_ids
+                self._create_item_button(item_name, quantity, stock_id, has_thresholds, stocked_threshold, running_out_threshold, low_threshold, in_cart)
         else:
             # Show empty message
             empty_label = _tk.Label(
@@ -137,6 +158,7 @@ class StockListView(_tk.Frame):
         self._selected_stock_id = None
         self._selected_item_button = None
         self._edit_quantity_button.pack_forget()
+        self._add_to_cart_button.pack_forget()
         self._delete_item_button.pack_forget()
 
     def _on_frame_configure(self, event=None):
@@ -172,7 +194,6 @@ class StockListView(_tk.Frame):
         if self._selected_stock_id is None:
             return
 
-        # Get the selected item data
         items = self._stock_list_db.get_all_items()
         selected_item = None
         for item in items:
@@ -200,6 +221,7 @@ class StockListView(_tk.Frame):
             self._selected_stock_id = None
             self._selected_item_button = None
             self._delete_item_button.pack_forget()
+            self._add_to_cart_button.pack_forget()
             self._edit_quantity_button.pack_forget()
             self.refresh_items()
         except Exception as e:
@@ -210,7 +232,6 @@ class StockListView(_tk.Frame):
         if self._selected_stock_id is None:
             return
 
-        # Get the selected item data
         items = self._stock_list_db.get_all_items()
         selected_item = None
         for item in items:
@@ -233,6 +254,34 @@ class StockListView(_tk.Frame):
         except Exception as e:
             messagebox.showerror("Error", f"Failed to update quantity: {str(e)}")
 
+    def _on_add_to_cart_click(self):
+        """Open the quantity dialog to add the selected item to the shopping list."""
+        if self._selected_stock_id is None:
+            return
+
+        QuantityDialog(self, 1, on_save_callback=self._on_add_to_cart_save)
+
+    def _on_add_to_cart_save(self, quantity):
+        """Handle confirmed quantity and add the item to the shopping list."""
+        try:
+            items = self._stock_list_db.get_all_items()
+            selected_item = None
+            for item in items:
+                if item[0] == self._selected_stock_id:
+                    selected_item = item
+                    break
+
+            if selected_item is None:
+                messagebox.showerror("Error", "Could not find selected item!")
+                return
+
+            item_id = selected_item[1]
+            self._shopping_list_db.add_item(item_id=item_id, quantity=quantity)
+            self.refresh_items()
+            self._shopping_list_view.refresh_items()
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to add item to cart: {str(e)}")
+
     def _get_sort_priority(self, has_thresholds, quantity, stocked_threshold, running_out_threshold, low_threshold):
         if not has_thresholds:
             return (3, 0)
@@ -251,17 +300,18 @@ class StockListView(_tk.Frame):
             return "#ffaa00"  # Yellow
         return "#ff0000"  # Red
 
-    def _create_item_button(self, item_name, quantity, stock_id, has_thresholds, stocked_threshold, running_out_threshold, low_threshold):
+    def _create_item_button(self, item_name, quantity, stock_id, has_thresholds, stocked_threshold, running_out_threshold, low_threshold, in_cart):
         """Create a button for a stock item."""
         border_color = self._get_border_color(has_thresholds, quantity, stocked_threshold, running_out_threshold, low_threshold)
 
-        button_text = f"{item_name}\nQty: {quantity}"
+        cart_suffix = "  [in cart]" if in_cart else ""
+        button_text = f"{item_name}{cart_suffix}\nQty: {quantity}"
 
         # Create a frame to act as the colored border
         border_frame = _tk.Frame(self._scrollable_frame, bg=border_color, highlightthickness=0)
         border_frame.pack(fill="x", padx=10, pady=5)
 
-        # Create the button inside the frame (with a small gap to show the frame color as border)
+        # Create the button inside the frame
         item_button = _tk.Button(
             border_frame,
             text=button_text,
@@ -274,7 +324,6 @@ class StockListView(_tk.Frame):
         )
         item_button.pack(fill="both", expand=True, padx=2, pady=2)
 
-        # Store reference to border frame in button for later access
         item_button._border_frame = border_frame
 
     def _on_item_click(self, stock_id, item_button, border_frame):
@@ -285,6 +334,7 @@ class StockListView(_tk.Frame):
             self._selected_stock_id = None
             self._selected_item_button = None
             self._edit_quantity_button.pack_forget()
+            self._add_to_cart_button.pack_forget()
             self._delete_item_button.pack_forget()
         else:
             # Deselect previous button
@@ -296,14 +346,10 @@ class StockListView(_tk.Frame):
             self._selected_item_button = item_button
             item_button.config(bg="#cccccc")
 
-            # Show edit quantity and delete buttons (forget first to ensure proper ordering)
+            # Show buttons in order
             self._edit_quantity_button.pack_forget()
+            self._add_to_cart_button.pack_forget()
             self._delete_item_button.pack_forget()
             self._edit_quantity_button.pack(side="left", padx=(0, 10))
-            self._delete_item_button.pack(side="left", padx=(0, 10))
-
-            # Show edit quantity and delete buttons (forget first to ensure proper ordering)
-            self._edit_quantity_button.pack_forget()
-            self._delete_item_button.pack_forget()
-            self._edit_quantity_button.pack(side="left", padx=(0, 10))
+            self._add_to_cart_button.pack(side="left", padx=(0, 10))
             self._delete_item_button.pack(side="left", padx=(0, 10))
