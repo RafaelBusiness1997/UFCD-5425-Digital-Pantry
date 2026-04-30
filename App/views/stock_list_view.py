@@ -244,7 +244,7 @@ class StockListView(_tk.Frame):
 
     def _get_border_color(self, has_thresholds, quantity, stocked_threshold, running_out_threshold, low_threshold):
         if not has_thresholds:
-            return "#cccccc"  # Gray
+            return "#4d4d4d"  # Gray
         if quantity >= stocked_threshold:
             return "#00aa00"  # Green
         if quantity >= running_out_threshold:
@@ -286,7 +286,7 @@ class StockListView(_tk.Frame):
         # Select new button
         self._selected_stock_id = stock_id
         self._selected_item_button = item_button
-        item_button.config(bg="#f0f0f0")
+        item_button.config(bg="#cccccc")
 
         # Show edit quantity and delete buttons (forget first to ensure proper ordering)
         self._edit_quantity_button.pack_forget()

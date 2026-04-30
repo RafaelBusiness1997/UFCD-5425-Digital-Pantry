@@ -14,8 +14,8 @@ class ViewController(tk.Frame):
         self.pack(fill="both", expand=True)
 
         self._stock_list_view = StockListView(self)
-        self._shopping_list_view = ShoppingListView(self)
-        self._item_list_view = ItemListView(self, self._stock_list_view)
+        self._shopping_list_view = ShoppingListView(self, self._stock_list_view)
+        self._item_list_view = ItemListView(self, self._stock_list_view, self._shopping_list_view)
 
         # Setup buttons.
         self._button_frame = tk.Frame(self)
@@ -58,6 +58,7 @@ class ViewController(tk.Frame):
         self._update_button_style(button)
         self._stock_list_view.deselect_item()
         self._item_list_view.deselect_item()
+        self._shopping_list_view.unselect_all()
 
     def _switch_view(self, view):
         if self._active_view:

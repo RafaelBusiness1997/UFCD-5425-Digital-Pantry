@@ -7,14 +7,15 @@ from database.item_list_db import ItemListDB
 
 class ItemListView(_tk.Frame):
     """View for displaying and managing the list of items."""
-    def __init__(self, parent, stock_list_view):
+    def __init__(self, parent, stock_list_view, shopping_list_view):
         super().__init__(parent)
 
         # Setup database
         self._item_list_db = ItemListDB()
         
-        # To refresh stock list view when items are edited/deleted
+        # To refresh stock and shopping list view when items are edited/deleted
         self._stock_list_view = stock_list_view
+        self._shopping_list_view = shopping_list_view
 
         # Track selected item
         self._selected_item_id = None
@@ -177,6 +178,7 @@ class ItemListView(_tk.Frame):
             self._delete_item_button.pack_forget()
             self._refresh_items()
             self._stock_list_view.refresh_items()
+            self._shopping_list_view.refresh_items()
         except Exception as e:
             messagebox.showerror("Error", f"Failed to update item: {str(e)}")
 
@@ -217,6 +219,7 @@ class ItemListView(_tk.Frame):
             self._delete_item_button.pack_forget()
             self._refresh_items()
             self._stock_list_view.refresh_items()
+            self._shopping_list_view.refresh_items()
         except Exception as e:
             messagebox.showerror("Error", f"Failed to delete item: {str(e)}")
 
@@ -271,7 +274,7 @@ class ItemListView(_tk.Frame):
         # Select new button
         self._selected_item_id = item_id
         self._selected_item_button = item_button
-        item_button.config(relief="solid", borderwidth=3, bg="#f0f0f0")
+        item_button.config(relief="solid", borderwidth=3, bg="#cccccc")
 
         # Show edit and delete buttons
         self._edit_item_button.pack(side="left", padx=(0, 10))
